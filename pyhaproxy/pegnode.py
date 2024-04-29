@@ -2874,10 +2874,18 @@ class Grammar(object):
         chunk0 = None
         if self._offset < self._input_size:
             chunk0 = self._input[self._offset:self._offset + 1]
+        failed = True
         if chunk0 == '*':
             address0 = TreeNode(self._input[self._offset:self._offset + 1], self._offset)
             self._offset = self._offset + 1
-        else:
+            failed = False
+        elif chunk0 == '[':
+            chunk1 = self._input[self._offset:self._offset + 4]
+            if chunk1 == '[::]':
+                address0 = TreeNode(self._input[self._offset:self._offset + 4], self._offset)
+                self._offset = self._offset + 4
+                failed = False
+        if failed == True:
             address0 = FAILURE
             if self._offset > self._failure:
                 self._failure = self._offset
